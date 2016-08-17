@@ -241,6 +241,21 @@ describe Rack::Utils do
         {"id" => "1", "y" => {"a" => "5", "b" => "7"}, "z" => {"id" => "3", "w" => "0"}},
         {"id" => "2", "y" => {"a" => "6", "b" => "8"}, "z" => {"id" => "4", "w" => "0"}},
       ]
+
+    Rack::Utils.parse_nested_query(
+      "x[y][][z]=1_2&x[y][][id]=1_1&x[y][][id]=2_1&x[y][][_destroy]=2_2&x[y][][z]=3_1&id=1"
+    ).must_equal(
+      {
+        "id" => "1",
+        "x" => {
+          "y" =>
+            [
+              { "id" => "1_1", "z" => "1_2" },
+              { "id" => "2_1", "_destroy" => "2_2" },
+              { "z" => "3_1" }
+            ]
+        }
+      })
   end
 
   it "allow setting the params hash class to use for parsing query strings" do
